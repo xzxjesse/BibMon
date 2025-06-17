@@ -233,3 +233,27 @@ def test_comparative_table_without_metrics(sample_data, model_with_y):
     )
     assert len(result) == 1
     assert 'Train' in result[0].columns
+
+def test_comparative_table_with_fault_period(sample_data, model_with_y):
+    """Test Case 5: C4=True, C5=True - Fault with defined start and end."""
+    X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
+    metrics = [r2_score, mean_absolute_error]
+    fault_start = '2023-01-01 00:00:00'
+    fault_end = '2023-01-02 00:00:00'
+    result = comparative_table(
+        models=[model_with_y],
+        X_train=X_train,
+        X_validation=X_validation,
+        X_test=X_test,
+        Y_train=Y_train,
+        Y_validation=Y_validation,
+        Y_test=Y_test,
+        metrics=metrics,
+        fault_start=fault_start,
+        fault_end=fault_end,
+        plot_SPE=False,
+        plot_predictions=False
+    )
+    assert len(result) >= 2
+    assert any('FDR' in str(df) for df in result)
+    assert any('FAR' in str(df) for df in result)
