@@ -87,3 +87,41 @@ def sample_data():
     })
     Y_test = pd.Series(np.random.randn(30))
     return X_train, X_validation, X_test, Y_train, Y_validation, Y_test
+
+@pytest.fixture
+def model_with_y():
+    """Mock model with Y variable (regression)."""
+    class MockModel:
+        def __init__(self):
+            self.has_Y = True
+            self.name = "Model with Y"
+            self.lim_conf = 0.99
+            self.Y_train_orig = None
+            self.X_train_orig = None
+            self.Y_train_pred_orig = None
+            self.X_train_pred_orig = None
+            self.train_time = 0.0
+            self.test_time = 0.0
+            self.Y_test_orig = None
+            self.Y_test_pred_orig = None
+            self.X_test_orig = None
+            self.X_test_pred_orig = None
+            self.alarms = {}
+        def predict(self, X, Y=None, *args, **kwargs):
+            pred = pd.Series(np.random.randn(len(X)), index=X.index)
+            if Y is not None:
+                self.Y_test_orig = Y
+                self.Y_test_pred_orig = pred
+            self.X_test_orig = X
+            self.X_test_pred_orig = pred
+            self.test_time = 0.1
+            return pred
+        def fit(self, X_train, Y_train, f_pp=None, a_pp=None, f_pp_test=None, a_pp_test=None, lim_conf=0.99, redefine_limit=False):
+            self.lim_conf = lim_conf
+            self.Y_train_orig = Y_train
+            self.X_train_orig = X_train
+            self.Y_train_pred_orig = pd.Series(np.random.randn(len(Y_train)), index=Y_train.index)
+            self.X_train_pred_orig = pd.Series(np.random.randn(len(X_train)), index=X_train.index)
+            self.train_time = 0.1
+            return self
+    return MockModel()
