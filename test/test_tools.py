@@ -193,3 +193,22 @@ def test_comparative_table_without_y_with_xpred(sample_data, model_without_y):
     )
     assert len(result) >= 1
     assert any('mean_absolute_error' in str(df) for df in result)
+
+def test_comparative_table_without_y_without_xpred(sample_data, model_without_y):
+    """Test Case 3: C1=True, C2=False, C3=False - Model without Y and without X_pred_to_plot."""
+    X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
+    metrics = [r2_score, mean_absolute_error]
+    X_pred_to_plot = None
+    result = comparative_table(
+        models=[model_without_y],
+        X_train=X_train,
+        X_validation=X_validation,
+        X_test=X_test,
+        metrics=metrics,
+        X_pred_to_plot=X_pred_to_plot,
+        plot_SPE=False,
+        plot_predictions=False,
+        times=True
+    )
+    assert len(result) == 1
+    assert 'Train' in result[0].columns
