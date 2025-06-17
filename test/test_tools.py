@@ -212,3 +212,24 @@ def test_comparative_table_without_y_without_xpred(sample_data, model_without_y)
     )
     assert len(result) == 1
     assert 'Train' in result[0].columns
+
+def test_comparative_table_without_metrics(sample_data, model_with_y):
+    """Test Case 4: C1=False - Without metrics, only time table."""
+    X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
+    metrics = None
+    X_pred_to_plot = None
+    result = comparative_table(
+        models=[model_with_y],
+        X_train=X_train,
+        X_validation=X_validation,
+        X_test=X_test,
+        Y_train=Y_train,
+        Y_validation=Y_validation,
+        Y_test=Y_test,
+        metrics=metrics,
+        X_pred_to_plot=X_pred_to_plot,
+        plot_SPE=False,
+        plot_predictions=False
+    )
+    assert len(result) == 1
+    assert 'Train' in result[0].columns
