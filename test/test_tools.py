@@ -154,3 +154,24 @@ def model_without_y():
             self.train_time = 0.1
             return self
     return MockModel()
+
+def test_comparative_table_with_y_and_metrics(sample_data, model_with_y):
+    """Test Case 1: C1=True, C2=True, C3=False - Model with Y and metrics."""
+    X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
+    metrics = [r2_score, mean_absolute_error]
+    X_pred_to_plot = None
+    result = comparative_table(
+        models=[model_with_y],
+        X_train=X_train,
+        X_validation=X_validation,
+        X_test=X_test,
+        Y_train=Y_train,
+        Y_validation=Y_validation,
+        Y_test=Y_test,
+        metrics=metrics,
+        X_pred_to_plot=X_pred_to_plot,
+        plot_SPE=False,
+        plot_predictions=False
+    )
+    assert len(result) >= 1
+    assert any('mean_absolute_error' in str(df) for df in result)
