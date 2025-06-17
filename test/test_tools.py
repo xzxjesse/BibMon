@@ -125,3 +125,32 @@ def model_with_y():
             self.train_time = 0.1
             return self
     return MockModel()
+
+@pytest.fixture
+def model_without_y():
+    """Mock model without Y variable (reconstruction)."""
+    class MockModel:
+        def __init__(self):
+            self.has_Y = False
+            self.name = "Model without Y"
+            self.lim_conf = 0.99
+            self.X_train_orig = None
+            self.X_train_pred_orig = None
+            self.train_time = 0.0
+            self.test_time = 0.0
+            self.X_test_orig = None
+            self.X_test_pred_orig = None
+            self.alarms = {}
+        def predict(self, X, Y=None, *args, **kwargs):
+            pred = pd.DataFrame(np.random.randn(*X.shape), index=X.index, columns=X.columns)
+            self.X_test_orig = X
+            self.X_test_pred_orig = pred
+            self.test_time = 0.1
+            return pred
+        def fit(self, X_train, Y_train, f_pp=None, a_pp=None, f_pp_test=None, a_pp_test=None, lim_conf=0.99, redefine_limit=False):
+            self.lim_conf = lim_conf
+            self.X_train_orig = X_train
+            self.X_train_pred_orig = pd.DataFrame(np.random.randn(*X_train.shape), index=X_train.index, columns=X_train.columns)
+            self.train_time = 0.1
+            return self
+    return MockModel()
