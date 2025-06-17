@@ -8,6 +8,11 @@ Created on Thu Sep  3 23:38:16 2020
 
 import bibmon
 import pandas as pd
+import pytest
+import numpy as np
+from datetime import datetime
+from bibmon import comparative_table
+from sklearn.metrics import r2_score, mean_absolute_error
 
 def test_complete_analysis():
     
@@ -61,3 +66,24 @@ def test_complete_analysis():
                             fault_end = '2018-01-02 09:00:00') 
     
     model.plot_importances()                                                                             
+
+# Fixtures for test data
+@pytest.fixture
+def sample_data():
+    """Generate synthetic data for training, validation and testing."""
+    X_train = pd.DataFrame({
+        'feature1': np.random.randn(100),
+        'feature2': np.random.randn(100)
+    })
+    Y_train = pd.Series(np.random.randn(100))
+    X_validation = pd.DataFrame({
+        'feature1': np.random.randn(50),
+        'feature2': np.random.randn(50)
+    })
+    Y_validation = pd.Series(np.random.randn(50))
+    X_test = pd.DataFrame({
+        'feature1': np.random.randn(30),
+        'feature2': np.random.randn(30)
+    })
+    Y_test = pd.Series(np.random.randn(30))
+    return X_train, X_validation, X_test, Y_train, Y_validation, Y_test
