@@ -281,3 +281,27 @@ def test_comparative_table_with_fault_start_only(sample_data, model_with_y):
     assert len(result) >= 2
     assert any('FDR' in str(df) for df in result)
     assert any('FAR' in str(df) for df in result)
+
+def test_comparative_table_with_mask(sample_data, model_with_y):
+    """Test Case 7: C4=False, C6=False - With detection mask."""
+    X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
+    metrics = [r2_score, mean_absolute_error]
+    mask = np.array([0, 1, 1, 0, 1])
+    model_with_y.fit(X_train, Y_train)
+    result = comparative_table(
+        models=[model_with_y],
+        X_train=X_train,
+        X_validation=X_validation,
+        X_test=X_test,
+        Y_train=Y_train,
+        Y_validation=Y_validation,
+        Y_test=Y_test,
+        metrics=metrics,
+        mask=mask,
+        plot_SPE=False,
+        plot_predictions=False,
+        fit_model=False
+    )
+    assert len(result) >= 2
+    assert any('FDR' in str(df) for df in result)
+    assert any('FAR' in str(df) for df in result)
