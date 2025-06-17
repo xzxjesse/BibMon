@@ -305,3 +305,31 @@ def test_comparative_table_with_mask(sample_data, model_with_y):
     assert len(result) >= 2
     assert any('FDR' in str(df) for df in result)
     assert any('FAR' in str(df) for df in result)
+
+def test_comparative_table_without_fault_and_mask(sample_data, model_with_y):
+    """Test Case 8: C4=False, C6=True - Without fault and mask, only prediction table."""
+    X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
+    metrics = [r2_score, mean_absolute_error]
+    fault_start = None
+    fault_end = None
+    mask = None
+    result = comparative_table(
+        models=[model_with_y],
+        X_train=X_train,
+        X_validation=X_validation,
+        X_test=X_test,
+        Y_train=Y_train,
+        Y_validation=Y_validation,
+        Y_test=Y_test,
+        metrics=metrics,
+        fault_start=fault_start,
+        fault_end=fault_end,
+        mask=mask,
+        plot_SPE=False,
+        plot_predictions=False,
+        times=False
+    )
+    assert len(result) == 1
+    assert 'Train' in result[0].columns
+    assert 'Validation' in result[0].columns
+    assert 'Test' in result[0].columns
