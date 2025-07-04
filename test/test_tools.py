@@ -155,6 +155,7 @@ def model_without_y():
             return self
     return MockModel()
 
+# MC/DC Test Cases
 def test_comparative_table_with_y_and_metrics(sample_data, model_with_y):
     """Test Case 1: C1=True, C2=True, C3=False - Model with Y and metrics."""
     X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
@@ -333,3 +334,14 @@ def test_comparative_table_without_fault_and_mask(sample_data, model_with_y):
     assert 'Train' in result[0].columns
     assert 'Validation' in result[0].columns
     assert 'Test' in result[0].columns
+
+def test_detect_drift_bias():
+    """Test for drift/bias detection in a time series."""
+    from bibmon import _alarms
+    # Time series with clear drift
+    data = np.concatenate([np.ones(50), np.ones(50)*10])
+    window = 10
+    threshold = 2.0
+    # The function should return 1 (or True) if drift/bias is detected
+    alarm = _alarms.detect_drift_bias(data, window=window, threshold=threshold)
+    assert alarm == 1 or alarm is True

@@ -44,3 +44,35 @@ def detecOutlier(data, lim, count = False, count_limit = 1):
             alarm = +1
         return alarm
         
+
+def detect_drift_bias(data, window=10, threshold=2.0):
+    """
+    Detects drift or bias in a time series using a sliding window approach.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+    window : int
+        Size of the window to check for drift/bias.
+    threshold : float
+        Minimum absolute difference between the mean of the first and second half of the window to trigger the alarm.
+
+    Returns
+    -------
+    alarm : int
+        1 if drift/bias is detected, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    if len(data) < window:
+        return 0
+    for i in range(len(data) - window + 1):
+        win = data[i:i+window]
+        first_half = win[:window//2]
+        second_half = win[window//2:]
+        diff = np.abs(np.mean(second_half) - np.mean(first_half))
+        if diff > threshold:
+            return 1
+    return 0
+        
