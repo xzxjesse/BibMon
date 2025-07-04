@@ -76,3 +76,25 @@ def detect_drift_bias(data, window=10, threshold=2.0):
             return 1
     return 0
         
+def detect_nelson_rule1(data):
+    """
+    Detects Nelson Rule 1: one point above 3 standard deviations from the mean.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if at least one point is above (mean + 3*std) or below (mean - 3*std), 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    std = np.std(data)
+    if np.any(data > mean + 3*std) or np.any(data < mean - 3*std):
+        return 1
+    return 0
+        

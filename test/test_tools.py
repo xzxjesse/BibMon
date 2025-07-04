@@ -345,3 +345,13 @@ def test_detect_drift_bias():
     # The function should return 1 (or True) if drift/bias is detected
     alarm = _alarms.detect_drift_bias(data, window=window, threshold=threshold)
     assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule1():
+    """Test for Nelson Rule 1: one point above 3 standard deviations from the mean."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with one outlier above 3 sigma
+    data = np.concatenate([np.zeros(20), np.array([10]), np.zeros(20)])
+    # The function should return 1 (or True) if Nelson Rule 1 is detected
+    alarm = _alarms.detect_nelson_rule1(data)
+    assert alarm == 1 or alarm is True
