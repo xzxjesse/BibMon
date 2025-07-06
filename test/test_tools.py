@@ -366,3 +366,12 @@ def test_detect_nelson_rule2():
     alarm = _alarms.detect_nelson_rule2(data)
     assert alarm == 1 or alarm is True
 
+def test_detect_nelson_rule3():
+    """Test for Nelson Rule 3: six consecutive points all increasing or all decreasing."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with six consecutive increasing values
+    data = np.concatenate([np.zeros(10), np.arange(1, 7), np.zeros(10)])
+    # The function should return 1 (or True) if Nelson Rule 3 is detected
+    alarm = _alarms.detect_nelson_rule3(data)
+    assert alarm == 1 or alarm is True

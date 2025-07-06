@@ -132,3 +132,28 @@ def detect_nelson_rule2(data):
         return 1
     return 0
         
+def detect_nelson_rule3(data):
+    """
+    Detects Nelson Rule 3: six consecutive points all increasing or all decreasing.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if six or more consecutive points are strictly increasing or strictly decreasing, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    n = 6
+    for i in range(len(data) - n + 1):
+        window = data[i:i+n]
+        if np.all(np.diff(window) > 0):
+            return 1
+        if np.all(np.diff(window) < 0):
+            return 1
+    return 0
+ 
