@@ -375,3 +375,13 @@ def test_detect_nelson_rule3():
     # The function should return 1 (or True) if Nelson Rule 3 is detected
     alarm = _alarms.detect_nelson_rule3(data)
     assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule4():
+    """Test for Nelson Rule 4: fourteen points in a row alternating up and down."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with fourteen points alternating above and below the mean
+    data = np.array([1, -1] * 7 + [0]*10)  # 14 alternations, then zeros
+    # The function should return 1 (or True) if Nelson Rule 4 is detected
+    alarm = _alarms.detect_nelson_rule4(data)
+    assert alarm == 1 or alarm is True

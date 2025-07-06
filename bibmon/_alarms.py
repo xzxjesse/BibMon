@@ -156,4 +156,31 @@ def detect_nelson_rule3(data):
         if np.all(np.diff(window) < 0):
             return 1
     return 0
- 
+        
+def detect_nelson_rule4(data):
+    """
+    Detects Nelson Rule 4: fourteen points in a row alternating up and down.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if fourteen or more consecutive points alternate above and below the mean, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    n = 14
+    # Create a boolean array: True if above mean, False if below
+    above = data > mean
+    # Check for 14 consecutive alternations
+    for i in range(len(above) - n + 1):
+        window = above[i:i+n]
+        # Alternating means: window[0] != window[1], window[1] != window[2], ...
+        if all(window[j] != window[j+1] for j in range(n-1)):
+            return 1
+    return 0
