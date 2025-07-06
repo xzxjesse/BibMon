@@ -301,3 +301,45 @@ def detect_nelson_rule8(data):
         if (np.sum(above) >= n and all_above) or (np.sum(below) >= n and all_below):
             return 1
     return 0
+
+def detect_variance_change(data, window_size=20, threshold=1.5):
+    """
+    Detects sudden changes in variance of a time series.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+    window_size : int
+        Size of the sliding window to calculate variance.
+    threshold : float
+        Minimum ratio of variance change to trigger alarm.
+
+    Returns
+    -------
+    alarm : int
+        1 if sudden variance change is detected, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    if len(data) < 2 * window_size:
+        return 0
+    
+    for i in range(len(data) - 2 * window_size + 1):
+        window1 = data[i:i+window_size]
+        window2 = data[i+window_size:i+2*window_size]
+        
+        var1 = np.var(window1)
+        var2 = np.var(window2)
+        
+        # Avoid division by zero
+        if var1 == 0:
+            var1 = 1e-10
+        if var2 == 0:
+            var2 = 1e-10
+            
+        ratio = max(var1/var2, var2/var1)
+        
+        if ratio > threshold:
+            return 1
+    return 0

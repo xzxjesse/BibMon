@@ -425,3 +425,13 @@ def test_detect_nelson_rule8():
     # The function should return 1 (or True) if Nelson Rule 8 is detected
     alarm = _alarms.detect_nelson_rule8(data)
     assert alarm == 1 or alarm is True
+
+def test_detect_variance_change():
+    """Test for sudden variance change detection."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with sudden variance change
+    data = np.concatenate([np.random.normal(0, 0.1, 50), np.random.normal(0, 2.0, 50)])
+    # The function should return 1 (or True) if variance change is detected
+    alarm = _alarms.detect_variance_change(data, window_size=20, threshold=1.5)
+    assert alarm == 1 or alarm is True
