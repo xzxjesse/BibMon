@@ -98,3 +98,37 @@ def detect_nelson_rule1(data):
         return 1
     return 0
         
+def detect_nelson_rule2(data):
+    """
+    Detects Nelson Rule 2: nine consecutive points on the same side of the mean.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if nine or more consecutive points are above or below the mean, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    above = data > mean
+    below = data < mean
+    # Check for 9 consecutive Trues in above or below
+    def has_n_consecutive(arr, n):
+        count = 0
+        for val in arr:
+            if val:
+                count += 1
+                if count >= n:
+                    return True
+            else:
+                count = 0
+        return False
+    if has_n_consecutive(above, 9) or has_n_consecutive(below, 9):
+        return 1
+    return 0
+        

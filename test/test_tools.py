@@ -355,3 +355,14 @@ def test_detect_nelson_rule1():
     # The function should return 1 (or True) if Nelson Rule 1 is detected
     alarm = _alarms.detect_nelson_rule1(data)
     assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule2():
+    """Test for Nelson Rule 2: nine consecutive points on the same side of the mean."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with nine consecutive points above the mean
+    data = np.concatenate([np.zeros(10), np.ones(9)*5, np.zeros(10)])
+    # The function should return 1 (or True) if Nelson Rule 2 is detected
+    alarm = _alarms.detect_nelson_rule2(data)
+    assert alarm == 1 or alarm is True
+
