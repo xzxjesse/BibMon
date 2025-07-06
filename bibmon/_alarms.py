@@ -244,3 +244,30 @@ def detect_nelson_rule6(data):
         if (np.sum(above) >= 4 and all_above) or (np.sum(below) >= 4 and all_below):
             return 1
     return 0
+
+def detect_nelson_rule7(data):
+    """
+    Detects Nelson Rule 7: fifteen consecutive points within 1 standard deviation of the mean, in both directions.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if fifteen consecutive points are within 1 standard deviation of the mean, in both directions, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    std = np.std(data)
+    n = 15
+    for i in range(len(data) - n + 1):
+        window = data[i:i+n]
+        within = np.abs(window - mean) < std
+        # Check if all 15 points are within 1 sigma and there are points both above and below the mean
+        if np.all(within) and np.any(window > mean) and np.any(window < mean):
+            return 1
+    return 0

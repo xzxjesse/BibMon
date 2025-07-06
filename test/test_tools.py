@@ -405,3 +405,13 @@ def test_detect_nelson_rule6():
     # The function should return 1 (or True) if Nelson Rule 6 is detected
     alarm = _alarms.detect_nelson_rule6(data)
     assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule7():
+    """Test for Nelson Rule 7: fifteen consecutive points within 1 standard deviation of the mean, in both directions."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with 15 points clearly within 1 sigma of the mean
+    data = np.concatenate([np.ones(10), np.array([0.8, 1.2, 0.9, 1.1, 0.7, 1.3, 0.6, 1.4, 0.5, 1.5, 0.4, 1.6, 0.3, 1.7, 0.2]), np.ones(10)])
+    # The function should return 1 (or True) if Nelson Rule 7 is detected
+    alarm = _alarms.detect_nelson_rule7(data)
+    assert alarm == 1 or alarm is True
