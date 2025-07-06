@@ -214,3 +214,33 @@ def detect_nelson_rule5(data):
         if (np.sum(above) >= 2 and all_above) or (np.sum(below) >= 2 and all_below):
             return 1
     return 0
+
+def detect_nelson_rule6(data):
+    """
+    Detects Nelson Rule 6: four out of five consecutive points above 1 standard deviation from the mean, all on the same side.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if four out of five consecutive points are above (mean + 1*std) or below (mean - 1*std), all on the same side of the mean (>= or <=), 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    std = np.std(data)
+    n = 5
+    for i in range(len(data) - n + 1):
+        window = data[i:i+n]
+        above = window > mean + 1*std
+        below = window < mean - 1*std
+        # All on the same side of the mean (>= or <=)
+        all_above = np.all(window >= mean)
+        all_below = np.all(window <= mean)
+        if (np.sum(above) >= 4 and all_above) or (np.sum(below) >= 4 and all_below):
+            return 1
+    return 0

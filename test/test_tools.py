@@ -396,3 +396,12 @@ def test_detect_nelson_rule5():
     alarm = _alarms.detect_nelson_rule5(data)
     assert alarm == 1 or alarm is True
 
+def test_detect_nelson_rule6():
+    """Test for Nelson Rule 6: four out of five consecutive points above 1 standard deviation from the mean, all on the same side."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with five points far above +1 sigma
+    data = np.concatenate([np.ones(30), np.array([10, 12, 14, 16, 18]), np.ones(30)])
+    # The function should return 1 (or True) if Nelson Rule 6 is detected
+    alarm = _alarms.detect_nelson_rule6(data)
+    assert alarm == 1 or alarm is True
