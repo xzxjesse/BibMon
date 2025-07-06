@@ -271,3 +271,33 @@ def detect_nelson_rule7(data):
         if np.all(within) and np.any(window > mean) and np.any(window < mean):
             return 1
     return 0
+
+def detect_nelson_rule8(data):
+    """
+    Detects Nelson Rule 8: eight consecutive points outside 1 standard deviation of the mean, all on the same side.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if eight consecutive points are outside 1 standard deviation of the mean, all on the same side (>= or <=), 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    std = np.std(data)
+    n = 8
+    for i in range(len(data) - n + 1):
+        window = data[i:i+n]
+        above = window > mean + 1*std
+        below = window < mean - 1*std
+        # All on the same side of the mean (>= or <=)
+        all_above = np.all(window >= mean)
+        all_below = np.all(window <= mean)
+        if (np.sum(above) >= n and all_above) or (np.sum(below) >= n and all_below):
+            return 1
+    return 0

@@ -415,3 +415,13 @@ def test_detect_nelson_rule7():
     # The function should return 1 (or True) if Nelson Rule 7 is detected
     alarm = _alarms.detect_nelson_rule7(data)
     assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule8():
+    """Test for Nelson Rule 8: eight consecutive points outside 1 standard deviation of the mean, all on the same side."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with eight consecutive points above +1 sigma
+    data = np.concatenate([np.ones(30), np.array([5, 6, 7, 8, 9, 10, 11, 12]), np.ones(30)])
+    # The function should return 1 (or True) if Nelson Rule 8 is detected
+    alarm = _alarms.detect_nelson_rule8(data)
+    assert alarm == 1 or alarm is True
