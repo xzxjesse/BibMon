@@ -435,3 +435,14 @@ def test_detect_variance_change():
     # The function should return 1 (or True) if variance change is detected
     alarm = _alarms.detect_variance_change(data, window_size=20, threshold=1.5)
     assert alarm == 1 or alarm is True
+
+def test_detect_outlier_frequency_change():
+    """Test for outlier frequency change detection."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with change in outlier frequency
+    data = np.concatenate([np.random.normal(0, 1, 50), np.random.normal(0, 1, 50) + np.random.choice([0, 5], 50, p=[0.8, 0.2])])
+    # The function should return 1 (or True) if outlier frequency change is detected
+    alarm = _alarms.detect_outlier_frequency_change(data, window_size=20, threshold=0.1)
+    assert alarm == 1 or alarm is True
+    

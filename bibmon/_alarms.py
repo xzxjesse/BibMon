@@ -343,3 +343,46 @@ def detect_variance_change(data, window_size=20, threshold=1.5):
         if ratio > threshold:
             return 1
     return 0
+
+def detect_outlier_frequency_change(data, window_size=20, threshold=0.1):
+    """
+    Detects changes in outlier frequency of a time series.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+    window_size : int
+        Size of the sliding window to calculate outlier frequency.
+    threshold : float
+        Minimum difference in outlier frequency to trigger alarm.
+
+    Returns
+    -------
+    alarm : int
+        1 if outlier frequency change is detected, 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    if len(data) < 2 * window_size:
+        return 0
+    
+    mean = np.mean(data)
+    std = np.std(data)
+    
+    for i in range(len(data) - 2 * window_size + 1):
+        window1 = data[i:i+window_size]
+        window2 = data[i+window_size:i+2*window_size]
+        
+        # Count outliers in each window (points beyond 2 standard deviations)
+        outliers1 = np.sum(np.abs(window1 - mean) > 2 * std)
+        outliers2 = np.sum(np.abs(window2 - mean) > 2 * std)
+        
+        # Calculate outlier frequency
+        freq1 = outliers1 / window_size
+        freq2 = outliers2 / window_size
+        
+        # Check if the difference exceeds threshold
+        if abs(freq1 - freq2) > threshold:
+            return 1
+    return 0
