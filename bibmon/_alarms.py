@@ -184,3 +184,33 @@ def detect_nelson_rule4(data):
         if all(window[j] != window[j+1] for j in range(n-1)):
             return 1
     return 0
+
+def detect_nelson_rule5(data):
+    """
+    Detects Nelson Rule 5: two out of three consecutive points above 2 standard deviations from the mean, all on the same side.
+
+    Parameters
+    ----------
+    data : array-like
+        Input time series data.
+
+    Returns
+    -------
+    alarm : int
+        1 if two out of three consecutive points are above (mean + 2*std) or below (mean - 2*std), all on the same side of the mean (>= or <=), 0 otherwise.
+    """
+    import numpy as np
+    data = np.asarray(data)
+    mean = np.mean(data)
+    std = np.std(data)
+    n = 3
+    for i in range(len(data) - n + 1):
+        window = data[i:i+n]
+        above = window > mean + 2*std
+        below = window < mean - 2*std
+        # All on the same side of the mean (>= or <=)
+        all_above = np.all(window >= mean)
+        all_below = np.all(window <= mean)
+        if (np.sum(above) >= 2 and all_above) or (np.sum(below) >= 2 and all_below):
+            return 1
+    return 0

@@ -385,3 +385,14 @@ def test_detect_nelson_rule4():
     # The function should return 1 (or True) if Nelson Rule 4 is detected
     alarm = _alarms.detect_nelson_rule4(data)
     assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule5():
+    """Test for Nelson Rule 5: two out of three consecutive points above 2 standard deviations from the mean, all on the same side."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with three points far above +2 sigma
+    data = np.concatenate([np.ones(30), np.array([30, 35, 40]), np.ones(30)])
+    # The function should return 1 (or True) if Nelson Rule 5 is detected
+    alarm = _alarms.detect_nelson_rule5(data)
+    assert alarm == 1 or alarm is True
+
