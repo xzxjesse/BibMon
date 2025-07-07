@@ -155,6 +155,7 @@ def model_without_y():
             return self
     return MockModel()
 
+# MC/DC Test Cases
 def test_comparative_table_with_y_and_metrics(sample_data, model_with_y):
     """Test Case 1: C1=True, C2=True, C3=False - Model with Y and metrics."""
     X_train, X_validation, X_test, Y_train, Y_validation, Y_test = sample_data
@@ -333,3 +334,115 @@ def test_comparative_table_without_fault_and_mask(sample_data, model_with_y):
     assert 'Train' in result[0].columns
     assert 'Validation' in result[0].columns
     assert 'Test' in result[0].columns
+
+def test_detect_drift_bias():
+    """Test for drift/bias detection in a time series."""
+    from bibmon import _alarms
+    # Time series with clear drift
+    data = np.concatenate([np.ones(50), np.ones(50)*10])
+    window = 10
+    threshold = 2.0
+    # The function should return 1 (or True) if drift/bias is detected
+    alarm = _alarms.detect_drift_bias(data, window=window, threshold=threshold)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule1():
+    """Test for Nelson Rule 1: one point above 3 standard deviations from the mean."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with one outlier above 3 sigma
+    data = np.concatenate([np.zeros(20), np.array([10]), np.zeros(20)])
+    # The function should return 1 (or True) if Nelson Rule 1 is detected
+    alarm = _alarms.detect_nelson_rule1(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule2():
+    """Test for Nelson Rule 2: nine consecutive points on the same side of the mean."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with nine consecutive points above the mean
+    data = np.concatenate([np.zeros(10), np.ones(9)*5, np.zeros(10)])
+    # The function should return 1 (or True) if Nelson Rule 2 is detected
+    alarm = _alarms.detect_nelson_rule2(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule3():
+    """Test for Nelson Rule 3: six consecutive points all increasing or all decreasing."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with six consecutive increasing values
+    data = np.concatenate([np.zeros(10), np.arange(1, 7), np.zeros(10)])
+    # The function should return 1 (or True) if Nelson Rule 3 is detected
+    alarm = _alarms.detect_nelson_rule3(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule4():
+    """Test for Nelson Rule 4: fourteen points in a row alternating up and down."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with fourteen points alternating above and below the mean
+    data = np.array([1, -1] * 7 + [0]*10)  # 14 alternations, then zeros
+    # The function should return 1 (or True) if Nelson Rule 4 is detected
+    alarm = _alarms.detect_nelson_rule4(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule5():
+    """Test for Nelson Rule 5: two out of three consecutive points above 2 standard deviations from the mean, all on the same side."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with three points far above +2 sigma
+    data = np.concatenate([np.ones(30), np.array([30, 35, 40]), np.ones(30)])
+    # The function should return 1 (or True) if Nelson Rule 5 is detected
+    alarm = _alarms.detect_nelson_rule5(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule6():
+    """Test for Nelson Rule 6: four out of five consecutive points above 1 standard deviation from the mean, all on the same side."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with five points far above +1 sigma
+    data = np.concatenate([np.ones(30), np.array([10, 12, 14, 16, 18]), np.ones(30)])
+    # The function should return 1 (or True) if Nelson Rule 6 is detected
+    alarm = _alarms.detect_nelson_rule6(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule7():
+    """Test for Nelson Rule 7: fifteen consecutive points within 1 standard deviation of the mean, in both directions."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with 15 points clearly within 1 sigma of the mean
+    data = np.concatenate([np.ones(10), np.array([0.8, 1.2, 0.9, 1.1, 0.7, 1.3, 0.6, 1.4, 0.5, 1.5, 0.4, 1.6, 0.3, 1.7, 0.2]), np.ones(10)])
+    # The function should return 1 (or True) if Nelson Rule 7 is detected
+    alarm = _alarms.detect_nelson_rule7(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_nelson_rule8():
+    """Test for Nelson Rule 8: eight consecutive points outside 1 standard deviation of the mean, all on the same side."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with eight consecutive points above +1 sigma
+    data = np.concatenate([np.ones(30), np.array([5, 6, 7, 8, 9, 10, 11, 12]), np.ones(30)])
+    # The function should return 1 (or True) if Nelson Rule 8 is detected
+    alarm = _alarms.detect_nelson_rule8(data)
+    assert alarm == 1 or alarm is True
+
+def test_detect_variance_change():
+    """Test for sudden variance change detection."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with sudden variance change
+    data = np.concatenate([np.random.normal(0, 0.1, 50), np.random.normal(0, 2.0, 50)])
+    # The function should return 1 (or True) if variance change is detected
+    alarm = _alarms.detect_variance_change(data, window_size=20, threshold=1.5)
+    assert alarm == 1 or alarm is True
+
+def test_detect_outlier_frequency_change():
+    """Test for outlier frequency change detection."""
+    from bibmon import _alarms
+    import numpy as np
+    # Series with change in outlier frequency
+    data = np.concatenate([np.random.normal(0, 1, 50), np.random.normal(0, 1, 50) + np.random.choice([0, 5], 50, p=[0.8, 0.2])])
+    # The function should return 1 (or True) if outlier frequency change is detected
+    alarm = _alarms.detect_outlier_frequency_change(data, window_size=20, threshold=0.1)
+    assert alarm == 1 or alarm is True
+    
